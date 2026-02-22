@@ -23,7 +23,6 @@ export default {
       const redirectUri = `${url.origin}/callback`;
       // CSRF対策用のstate生成
       const state = btoa(Math.random().toString()).substring(0, 16);
-      return new Response("Callback処理（未実装）" + state, { status: 200 });
       const lineLoginUrl =
         "https://access.line.me/oauth2/v2.1/authorize" +
         `?response_type=code` +
@@ -34,10 +33,10 @@ export default {
       
       // 仮でCookieにstateを保存（本番は署名付きや暗号化推奨）
       const response = Response.redirect(lineLoginUrl, 302);
-      response.headers.append(
-        "Set-Cookie",
-        `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
-      );
+      //response.headers.append(
+      //  "Set-Cookie",
+      //  `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
+      //);
 
       return response;
     }
