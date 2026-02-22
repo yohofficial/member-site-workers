@@ -30,13 +30,17 @@ export default {
         `&redirect_uri=${encodeURIComponent(redirectUri)}` +
         `&scope=profile%20openid` +
         `&state=${state}`;
+
+      const redirectUrl = lineLoginUrl;
       
-      // 仮でCookieにstateを保存（本番は署名付きや暗号化推奨）
-      const response = Response.redirect(lineLoginUrl, 302);
-      response.headers.append(
-        "Set-Cookie",
-        `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
-      );
+      // Response.redirect() を使わず Response オブジェクトを自分で作る
+      const response = new Response(null, {
+        status: 302,
+        headers: {
+          "Location": redirectUrl,
+          "Set-Cookie": `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
+        }
+      });
 
       return response;
     }
