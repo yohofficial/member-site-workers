@@ -23,7 +23,7 @@ export default {
       const redirectUri = `${url.origin}/callback`;
       // CSRF対策用のstate生成
       const state = btoa(Math.random().toString()).substring(0, 16);
-
+      return new Response("Callback処理（未実装）" + state, { status: 200 });
       const lineLoginUrl =
         "https://access.line.me/oauth2/v2.1/authorize" +
         `?response_type=code` +
