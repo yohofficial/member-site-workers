@@ -48,12 +48,12 @@ export default {
     // ───────────────
     // /callback：LINE認証後処理
     // ───────────────
-    if (url.pathname === "/callback") {
+    //if (url.pathname === "/callback") {
       // ここで code をトークンに変換
       // ユーザーID取得 → セッション発行 → /mypage にリダイレクト
       // 実装詳細は後で追加
-      return new Response("Callback処理（未実装）", { status: 200 });
-    }
+      //return new Response("Callback処理（未実装）", { status: 200 });
+    //}
     if (url.pathname === "/callback") {
       const code = url.searchParams.get("code");
       if (!code) {
@@ -85,10 +85,10 @@ export default {
       
       // セッションを Cookie にセットして /mypage へリダイレクト
       const response = Response.redirect("/mypage", 302);
-      response.headers.append(
-        "Set-Cookie",
-        `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
-      );
+      //response.headers.append(
+        //"Set-Cookie",
+        //`session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
+      //);
       return response;
     }
 
