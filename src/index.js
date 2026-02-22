@@ -59,7 +59,7 @@ export default {
       if (!code) {
         return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
       }
-      return new Response("Callback処理（未実装）" + code, { status: 200 });
+      
       // LINEトークン取得
       const tokenResp = await fetch("https://api.line.me/oauth2/v2.1/token", {
         method: "POST",
@@ -72,6 +72,8 @@ export default {
           client_secret: env.LINE_CHANNEL_SECRET,
         }),
       });
+
+      return new Response("Callback処理（未実装）" + code, { status: 200 });
       
       if (!tokenResp.ok) {
         return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
