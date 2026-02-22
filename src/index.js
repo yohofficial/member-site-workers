@@ -33,10 +33,10 @@ export default {
       
       // 仮でCookieにstateを保存（本番は署名付きや暗号化推奨）
       const response = Response.redirect(lineLoginUrl, 302);
-      //response.headers.append(
-      //  "Set-Cookie",
-      //  `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
-      //);
+      response.headers.append(
+        "Set-Cookie",
+        `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
+      );
 
       return response;
     }
