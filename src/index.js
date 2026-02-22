@@ -3,7 +3,7 @@ export default {
     const url = new URL(request.url);
 
     const clientId = env.LINE_CHANNEL_ID;
-  console.log("clientId:", clientId);
+    return new Response(clientId, { status: 200 });
     // ───────────────
     // / ルート：ログイン画面表示
     // ───────────────
