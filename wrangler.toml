@@ -1,6 +1,6 @@
 name = "member-site-workers"
 main = "src/index.js"
-compatibility_date = "2026-02-23"
+compatibility_date = "2026-02-15"
 
 # ===== 静的ファイル（publicフォルダ） =====
 assets = { directory = "./public" }
