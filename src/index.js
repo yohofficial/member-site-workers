@@ -35,11 +35,48 @@ export default {
     // ───────────────
     // /callback：LINE認証後処理
     // ───────────────
-    if (url.pathname === "/callback") {
+    //if (url.pathname === "/callback") {
       // ここで code をトークンに変換
       // ユーザーID取得 → セッション発行 → /mypage にリダイレクト
       // 実装詳細は後で追加
-      return new Response("Callback処理（未実装）", { status: 200 });
+      //return new Response("Callback処理（未実装）", { status: 200 });
+    //}
+    if (url.pathname === "/callback") {
+      const code = url.searchParams.get("code");
+      if (!code) {
+        return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
+      }
+      
+      // LINEトークン取得
+      const tokenResp = await fetch("https://api.line.me/oauth2/v2.1/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code: code,
+          redirect_uri: `${url.origin}/callback`,
+          client_id: env.LINE_CHANNEL_ID,
+          client_secret: env.LINE_CHANNEL_SECRET,
+        }),
+      });
+      
+      if (!tokenResp.ok) {
+        return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
+      }
+      
+      const tokenData = await tokenResp.json();
+      const userId = tokenData.id_token; // 実際は id_token をデコードして sub を取得
+      
+      // 仮セッションID作成（安全性向上は後で）
+      const sessionId = btoa(userId + ":" + Date.now());
+      
+      // セッションを Cookie にセットして /mypage へリダイレクト
+      const response = Response.redirect("/mypage", 302);
+      response.headers.append(
+        "Set-Cookie",
+        `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
+      );
+      return response;
     }
 
     // ───────────────
