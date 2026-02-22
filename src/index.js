@@ -2,6 +2,8 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    const clientId = env.LINE_CHANNEL_ID;
+  console.log("clientId:", clientId);
     // ───────────────
     // / ルート：ログイン画面表示
     // ───────────────
