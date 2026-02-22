@@ -39,7 +39,7 @@ export default {
         `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
       );
 
-      return Response.redirect(lineLoginUrl, 302);
+      return response;
     }
 
     // ───────────────
