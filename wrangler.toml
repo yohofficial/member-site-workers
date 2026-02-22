@@ -14,3 +14,5 @@ database_name = "member-db"
 database_id = "20434aaf-9755-4153-b9a2-1b41ce08faac"
 
 # ===== 環境変数（※機密はダッシュボードで設定） =====
+[var]
+APP_NAME = "Member Site"
