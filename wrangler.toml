@@ -3,7 +3,9 @@ main = "src/index.js"
 compatibility_date = "2026-02-15"
 
 # ===== 静的ファイル（publicフォルダ） =====
-assets = { directory = "./public" }
+[assets]
+directory = "./public"
+binding = "ASSETS"
 
 # ===== D1 データベース設定 =====
 [[d1_databases]]
