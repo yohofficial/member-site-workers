@@ -59,7 +59,7 @@ export default {
       if (!code) {
         return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
       }
-      
+      return new Response("Callback処理（未実装）" + code, { status: 200 });
       // LINEトークン取得
       const tokenResp = await fetch("https://api.line.me/oauth2/v2.1/token", {
         method: "POST",
@@ -85,10 +85,10 @@ export default {
       
       // セッションを Cookie にセットして /mypage へリダイレクト
       const response = Response.redirect("/mypage", 302);
-      //response.headers.append(
-        //"Set-Cookie",
-        //`session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
-      //);
+      response.headers.append(
+        "Set-Cookie",
+        `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
+      );
       return response;
     }
 
