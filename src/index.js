@@ -119,11 +119,11 @@ export default {
     // /mypage：マイページ表示
     // ───────────────
     if (url.pathname === "/mypage") {
-      return new Response("Callback処理（未実装）" , { status: 200 });
-      const session = getSession(request);
-      if (!session) {
-        return Response.redirect("/", 302);
-      }
+      // return new Response("Callback処理（未実装）" , { status: 200 });
+      // const session = getSession(request);
+      // if (!session) {
+      //   return Response.redirect("/", 302);
+      // }
 
       return env.ASSETS.fetch(new Request(new URL("/views/mypage.html", request.url)));
     }
