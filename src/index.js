@@ -95,9 +95,9 @@ export default {
       const sessionId = btoa(userId + ":" + Date.now());
       
       // セッションを Cookie にセットして /mypage へリダイレクト
-      const redirectUrl = `https://${url.host}/mypage`;
+      //const redirectUrl = `https://${url.host}/mypage`;
       //const response = Response.redirect("/mypage", 302);
-      return new Response("Callback処理（未実装）" + code, { status: 200 });
+      //return new Response("Callback処理（未実装）" + code, { status: 200 });
       //response.headers.append(
       //  "Set-Cookie",
       //  `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
