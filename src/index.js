@@ -104,7 +104,7 @@ export default {
       //);
       const state = btoa(Math.random().toString()).substring(0, 16);
       const redirectUrl = `https://${url.host}/mypage`;
-      return new Response("Callback処理（未実装）" + redirectUrl, { status: 200 });
+      //return new Response("Callback処理（未実装）" + redirectUrl, { status: 200 });
       const response = new Response(null, {
         status: 302,
         headers: {
