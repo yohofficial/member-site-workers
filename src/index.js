@@ -72,8 +72,6 @@ export default {
           client_secret: env.LINE_CHANNEL_SECRET,
         }),
       });
-
-      return new Response("Callback処理（未実装）" + code, { status: 200 });
       
       if (!tokenResp.ok) {
         return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
@@ -81,7 +79,7 @@ export default {
       
       const tokenData = await tokenResp.json();
       const userId = tokenData.id_token; // 実際は id_token をデコードして sub を取得
-      
+      return new Response("Callback処理（未実装）" + code, { status: 200 });
       // 仮セッションID作成（安全性向上は後で）
       const sessionId = btoa(userId + ":" + Date.now());
       
