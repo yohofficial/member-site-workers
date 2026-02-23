@@ -59,6 +59,17 @@ export default {
       if (!code) {
         return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
       }
+      // const returnedState = url.searchParams.get("state");
+      // // Cookieから保存したstateを取得
+      // const cookieHeader = request.headers.get("Cookie") || "";
+      // const cookies = Object.fromEntries(
+      //   cookieHeader.split(";").map(c => c.trim().split("="))
+      // );
+      // const savedState = cookies["oauth_state"];
+      // // CSRF対策チェック
+      // if (!returnedState || returnedState !== savedState) {
+      //   return new Response("Invalid state", { status: 400 });
+      // }
       
       // LINEトークン取得
       const tokenResp = await fetch("https://api.line.me/oauth2/v2.1/token", {
@@ -84,12 +95,22 @@ export default {
       const sessionId = btoa(userId + ":" + Date.now());
       
       // セッションを Cookie にセットして /mypage へリダイレクト
-      const response = Response.redirect("/mypage", 302);
+      const redirectUrl = `https://${url.host}/mypage`;
+      //const response = Response.redirect("/mypage", 302);
       return new Response("Callback処理（未実装）" + code, { status: 200 });
-      response.headers.append(
-        "Set-Cookie",
-        `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
-      );
+      //response.headers.append(
+      //  "Set-Cookie",
+      //  `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
+      //);
+      const state = btoa(Math.random().toString()).substring(0, 16);
+      const redirectUrl = `https://${new URL(request.url).host}/mypage`;
+      const response = new Response(null, {
+        status: 302,
+        headers: {
+          "Location": redirectUrl,
+          "Set-Cookie": `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
+        }
+      });
       return response;
     }
 
