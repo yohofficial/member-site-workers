@@ -112,7 +112,6 @@ export default {
           "Set-Cookie": `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
         }
       });
-      return new Response("Callback処理（未実装）" + redirectUrl, { status: 200 });
       return response;
     }
 
@@ -120,6 +119,7 @@ export default {
     // /mypage：マイページ表示
     // ───────────────
     if (url.pathname === "/mypage") {
+      return new Response("Callback処理（未実装）" , { status: 200 });
       const session = getSession(request);
       if (!session) {
         return Response.redirect("/", 302);
