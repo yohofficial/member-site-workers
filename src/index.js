@@ -109,8 +109,8 @@ export default {
         status: 302,
         headers: {
           "Location": redirectUrl,
-          "Set-Cookie": `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`,
-        },
+          "Set-Cookie": `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
+        }
       });
       return response;
     }
