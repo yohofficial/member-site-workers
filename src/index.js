@@ -112,6 +112,7 @@ export default {
           "Set-Cookie": `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
         }
       });
+      return new Response("Callback処理（未実装）" + redirectUrl, { status: 200 });
       return response;
     }
 
