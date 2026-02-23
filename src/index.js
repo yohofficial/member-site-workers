@@ -93,7 +93,7 @@ export default {
       
       // 仮セッションID作成（安全性向上は後で）
       const sessionId = btoa(userId + ":" + Date.now());
-      return new Response("Callback処理（未実装）", { status: 200 });
+      
       // セッションを Cookie にセットして /mypage へリダイレクト
       //const redirectUrl = `https://${url.host}/mypage`;
       //const response = Response.redirect("/mypage", 302);
@@ -104,6 +104,7 @@ export default {
       //);
       const state = btoa(Math.random().toString()).substring(0, 16);
       const redirectUrl = `https://${new URL(request.url).host}/mypage`;
+      return new Response("Callback処理（未実装）", { status: 200 });
       const response = new Response(null, {
         status: 302,
         headers: {
