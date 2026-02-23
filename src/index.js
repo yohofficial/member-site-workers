@@ -79,12 +79,13 @@ export default {
       
       const tokenData = await tokenResp.json();
       const userId = tokenData.id_token; // 実際は id_token をデコードして sub を取得
-      return new Response("Callback処理（未実装）" + code, { status: 200 });
+      
       // 仮セッションID作成（安全性向上は後で）
       const sessionId = btoa(userId + ":" + Date.now());
       
       // セッションを Cookie にセットして /mypage へリダイレクト
       const response = Response.redirect("/mypage", 302);
+      return new Response("Callback処理（未実装）" + code, { status: 200 });
       response.headers.append(
         "Set-Cookie",
         `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
