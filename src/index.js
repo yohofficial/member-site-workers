@@ -30,19 +30,14 @@ export default {
         `&redirect_uri=${encodeURIComponent(redirectUri)}` +
         `&scope=profile%20openid` +
         `&state=${state}`;
-
-      const redirectUrl = lineLoginUrl;
       
-      // Response.redirect() を使わず Response オブジェクトを自分で作る
-      const response = new Response(null, {
+      return new Response(null, {
         status: 302,
         headers: {
-          "Location": redirectUrl,
+          Location: lineLoginUrl,
           "Set-Cookie": `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
         }
       });
-
-      return response;
     }
 
     // ───────────────
@@ -54,92 +49,82 @@ export default {
       // 実装詳細は後で追加
       //return new Response("Callback処理（未実装）", { status: 200 });
     //}
+        // ───────────────
+    // /callback
+    // ───────────────
     if (url.pathname === "/callback") {
       const code = url.searchParams.get("code");
-      if (!code) {
-        return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
+      const returnedState = url.searchParams.get("state");
+
+      if (!code || !returnedState) {
+        return new Response("Invalid callback", { status: 400 });
       }
-      // const returnedState = url.searchParams.get("state");
-      // // Cookieから保存したstateを取得
-      // const cookieHeader = request.headers.get("Cookie") || "";
-      // const cookies = Object.fromEntries(
-      //   cookieHeader.split(";").map(c => c.trim().split("="))
-      // );
-      // const savedState = cookies["oauth_state"];
-      // // CSRF対策チェック
-      // if (!returnedState || returnedState !== savedState) {
-      //   return new Response("Invalid state", { status: 400 });
-      // }
-      
+
+      const cookies = parseCookies(request);
+      if (cookies.oauth_state !== returnedState) {
+        return new Response("Invalid state", { status: 400 });
+      }
+
       // LINEトークン取得
       const tokenResp = await fetch("https://api.line.me/oauth2/v2.1/token", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
           grant_type: "authorization_code",
-          code: code,
+          code,
           redirect_uri: `${url.origin}/callback`,
           client_id: env.LINE_CHANNEL_ID,
           client_secret: env.LINE_CHANNEL_SECRET,
         }),
       });
-      
+
       if (!tokenResp.ok) {
-        return env.ASSETS.fetch(new Request(new URL("/views/error.html", request.url)));
+        return new Response("Token error", { status: 500 });
       }
-      
+
       const tokenData = await tokenResp.json();
-      const userId = tokenData.id_token; // 実際は id_token をデコードして sub を取得
-      
-      // 仮セッションID作成（安全性向上は後で）
-      const sessionId = btoa(userId + ":" + Date.now());
-      
-      // セッションを Cookie にセットして /mypage へリダイレクト
-      //const redirectUrl = `https://${url.host}/mypage`;
-      //const response = Response.redirect("/mypage", 302);
-      //return new Response("Callback処理（未実装）" + code, { status: 200 });
-      //response.headers.append(
-      //  "Set-Cookie",
-      //  `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`
-      //);
-      const state = btoa(Math.random().toString()).substring(0, 16);
-      const redirectUrl = `https://${url.host}/mypage`;
-      //return new Response("Callback処理（未実装）" + redirectUrl, { status: 200 });
-      const response = new Response(null, {
+
+      // 仮：ユーザー識別子
+      const sessionId = crypto.randomUUID();
+
+      return new Response(null, {
         status: 302,
         headers: {
-          "Location": redirectUrl,
-          "Set-Cookie": `oauth_state=${state}; HttpOnly; Path=/; Max-Age=300`
+          Location: "/mypage",
+          "Set-Cookie": [
+            `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`,
+            `oauth_state=; Path=/; Max-Age=0`
+          ].join(", ")
         }
       });
-      return response;
     }
 
     // ───────────────
     // /mypage：マイページ表示
     // ───────────────
     if (url.pathname === "/mypage") {
-      // return new Response("Callback処理（未実装）" , { status: 200 });
-      // const session = getSession(request);
-      // if (!session) {
-      //   return Response.redirect("/", 302);
-      // }
-
+      const session = getSession(request);
+      if (!session) {
+        return Response.redirect("/", 302);
+      }
       return env.ASSETS.fetch(new Request(new URL("/views/mypage.html", request.url)));
     }
 
-    // ───────────────
-    // 静的ファイル配信（CSSなど）
-    // ───────────────
     return env.ASSETS.fetch(request);
   },
 };
 
 // ───────────────
-// セッション取得（仮実装）
+// Cookie util
 // ───────────────
+function parseCookies(request) {
+  const header = request.headers.get("Cookie") || "";
+  return Object.fromEntries(
+    header.split(";").map(v => v.trim().split("="))
+  );
+}
+
 function getSession(request) {
-  // Cookie などでセッションを確認
-  // 現時点では未実装
-  return null;
+  const cookies = parseCookies(request);
+  return cookies.session || null;
 }
