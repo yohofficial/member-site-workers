@@ -86,6 +86,7 @@ export default {
 
       // 仮：ユーザー識別子
       const sessionId = crypto.randomUUID();
+      return new Response("mypage処理（未実装）" + sessionId, { status: 200 });
 
       return new Response(null, {
       status: 302,
