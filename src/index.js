@@ -94,6 +94,18 @@ export default {
         "Set-Cookie": `session_id=${sessionId}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600`
         }
       });
+      const response = new Response(null, {
+        status: 302,
+        headers: {
+          Location: "/mypage"
+        }
+      });
+      
+      response.headers.append(
+        "Set-Cookie",
+        `session_id=${sessionId}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600`
+      );
+      return response;
     }
 
     // ───────────────
