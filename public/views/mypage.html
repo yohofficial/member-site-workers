@@ -1,14 +1,118 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
   <meta charset="UTF-8">
   <title>マイページ</title>
+
   <link rel="stylesheet" href="/css/style.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
   <style>
-    body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+    body { font-family: sans-serif; text-align: center; }
+    #qrcode { margin-top: 20px; }
   </style>
 </head>
+
 <body>
-  <h1>マイページです</h1>
+<div class="page">
+
+  <table class="table-logo">
+    <tr>
+      <td class="left-cell">
+        <img src="https://lh3.googleusercontent.com/d/1JcMBGVlb2Hl6Wdo29DyNOVBk7sAHwlgp" style="width:160px;">
+      </td>
+    </tr>
+  </table>
+
+  <!-- マイページ -->
+  <div id="content1" class="content active">
+    <header>
+      <h2 id="username">読み込み中...</h2>
+    </header>
+
+    <div class="card">
+      <p>会員証</p>
+      <div class="qrcode-container" id="qrcode"></div>
+      <p class="points" id="points"></p>
+    </div>
+
+    <div class="notice-list">
+      <div class="notice-item highlight">【特別】今月限定！リフレッククーポン配布中</div>
+      <div class="notice-item highlight">3/20 サイトシステムメンテナンスのお知らせ</div>
+    </div>
+  </div>
+
+  <!-- 予約 -->
+  <div id="content2" class="content">
+    <p>現在の予約</p>
+    <div class="card">
+      <div class="notice-item highlight">
+        2026/1/28(水) 19:00～20:00<br>
+        クーポン：タイ式マッサージ３
+      </div>
+      <button>予約サイトへ</button>
+    </div>
+  </div>
+
+  <!-- クーポン -->
+  <div id="content3" class="content">
+    <p>配信中のクーポン</p>
+    <div class="card">
+      <div class="notice-item highlight">
+        会員登録限定<br>
+        クーポン：タイ式マッサージ３
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 下メニュー -->
+<div class="bottom-menu">
+  <button class="btn active" onclick="showContent(1)">マイページ</button>
+  <button class="btn" onclick="showContent(2)">予約</button>
+  <button class="btn" onclick="showContent(3)">限定メニュー</button>
+</div>
+
+<script>
+async function loadUser() {
+  const res = await fetch("/api/me");
+
+  if (!res.ok) {
+    location.href = "/";
+    return;
+  }
+
+  const user = await res.json();
+
+  document.getElementById("username").textContent =
+    `ようこそ、${user.name} さん！`;
+
+  document.getElementById("points").textContent =
+    `現在のポイント：${user.points} P`;
+
+  new QRCode(document.getElementById("qrcode"), {
+    text: user.lineId,
+    width: 260,
+    height: 260,
+    correctLevel: QRCode.CorrectLevel.H
+  });
+}
+
+loadUser();
+
+function showContent(no) {
+  document.querySelectorAll('.content')
+    .forEach(el => el.classList.remove('active'));
+
+  document.querySelectorAll('.btn')
+    .forEach(btn => btn.classList.remove('active'));
+
+  document.getElementById('content' + no).classList.add('active');
+  document.querySelectorAll('.btn')[no - 1].classList.add('active');
+}
+</script>
+
 </body>
 </html>
