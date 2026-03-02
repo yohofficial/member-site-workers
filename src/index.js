@@ -100,7 +100,6 @@ export default {
           Location: "/mypage"
         }
       });
-      
       response.headers.append(
         "Set-Cookie",
         `session_id=${sessionId}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600`
@@ -140,12 +139,15 @@ function getSession(request) {
   const cookieHeader = request.headers.get("Cookie");
   if (!cookieHeader) return null;
 
-  const cookies = Object.fromEntries(
-    cookieHeader.split(";").map(c => {
-      const [key, ...v] = c.trim().split("=");
-      return [key, v.join("=")];
-    })
-  );
+  const cookies = cookieHeader.split(";");
 
-  return cookies["session_id"] || null;
+  for (const cookie of cookies) {
+    const [key, value] = cookie.trim().split("=");
+
+    if (key === "session_id") {
+      return value;
+    }
+  }
+
+  return null;
 }
