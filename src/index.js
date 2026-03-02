@@ -9,6 +9,7 @@ export default {
       // セッションチェック
       const session = getSession(request);
       if (session) {
+        return new Response("Callback処理（未実装）" + session, { status: 200 });
         return Response.redirect("/mypage", 302);
       }
 
