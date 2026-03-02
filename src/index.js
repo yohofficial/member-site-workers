@@ -103,6 +103,7 @@ export default {
     // /mypage：マイページ表示
     // ───────────────
     if (url.pathname === "/mypage") {
+      return new Response("mypage処理（未実装）", { status: 200 });
       const session = getSession(request);
       if (!session) {
         return Response.redirect("/", 302);
