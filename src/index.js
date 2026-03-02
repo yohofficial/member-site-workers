@@ -88,13 +88,10 @@ export default {
       const sessionId = crypto.randomUUID();
 
       return new Response(null, {
-        status: 302,
-        headers: {
-          Location: "/mypage",
-          "Set-Cookie": [
-            `session=${sessionId}; HttpOnly; Path=/; Max-Age=3600`,
-            `oauth_state=; Path=/; Max-Age=0`
-          ].join(", ")
+      status: 302,
+      headers: {
+        Location: "/mypage",
+        "Set-Cookie": `session_id=${sessionId}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600`
         }
       });
     }
