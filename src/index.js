@@ -9,8 +9,8 @@ export default {
       // セッションチェック
       const session = getSession(request);
       if (session) {
-        return new Response("Callback処理（未実装）" + session, { status: 200 });
-        return Response.redirect("/mypage", 302);
+        //return new Response("Callback処理（未実装）" + session, { status: 200 });
+        return env.ASSETS.fetch(new Request(new URL("/views/mypage.html", request.url)));
       }
 
       // ログイン画面を返す
