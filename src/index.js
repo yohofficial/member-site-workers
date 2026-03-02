@@ -86,7 +86,6 @@ export default {
 
       // 仮：ユーザー識別子
       const sessionId = crypto.randomUUID();
-      return new Response("mypage処理（未実装）" + sessionId, { status: 200 });
 
       return new Response(null, {
       status: 302,
@@ -102,6 +101,7 @@ export default {
     // ───────────────
     if (url.pathname === "/mypage") {
       const session = getSession(request);
+      return new Response("処理（未実装）" +session, { status: 200 });
       if (!session) {
         return new Response("mypage1処理（未実装）", { status: 200 });
         //return Response.redirect("/", 302);
