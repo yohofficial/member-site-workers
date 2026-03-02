@@ -137,6 +137,15 @@ function parseCookies(request) {
 }
 
 function getSession(request) {
-  const cookies = parseCookies(request);
-  return cookies.session || null;
+  const cookieHeader = request.headers.get("Cookie");
+  if (!cookieHeader) return null;
+
+  const cookies = Object.fromEntries(
+    cookieHeader.split(";").map(c => {
+      const [key, ...v] = c.trim().split("=");
+      return [key, v.join("=")];
+    })
+  );
+
+  return cookies["session_id"] || null;
 }
