@@ -104,11 +104,12 @@ export default {
     // ───────────────
     if (url.pathname === "/mypage") {
       const session = getSession(request);
-      return new Response("mypage処理（未実装）", { status: 200 });
       if (!session) {
-        return Response.redirect("/", 302);
+        return new Response("mypage1処理（未実装）", { status: 200 });
+        //return Response.redirect("/", 302);
       }
-      return env.ASSETS.fetch(new Request(new URL("/views/mypage.html", request.url)));
+      return new Response("mypage2処理（未実装）", { status: 200 });
+      //return env.ASSETS.fetch(new Request(new URL("/views/mypage.html", request.url)));
     }
 
     return env.ASSETS.fetch(request);
