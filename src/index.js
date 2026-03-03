@@ -150,7 +150,62 @@ export default {
       if (!session) {
         return Response.redirect("/", 302);
       }
+      // ① sessionテーブル確認
+      const sessionRow = await env.DB.prepare(
+        "SELECT * FROM sessions WHERE id = ?"
+      ).bind(session).first();
+    
+      if (!sessionRow) {
+        return Response.redirect("/", 302);
+      }
+
+      // ② users取得
+      const user = await env.DB.prepare(
+        "SELECT * FROM users WHERE id = ?"
+      ).bind(sessionRow.user_id).first();
+    
+      if (!user) {
+        return Response.redirect("/", 302);
+      }
       return env.ASSETS.fetch(new Request(new URL("/views/mypage.html", request.url)));
+    }
+    if (url.pathname === "/api/me") {
+      const session = getSession(request);
+      if (!session) {
+        return new Response(
+          JSON.stringify({ error: "Not logged in" }),
+          { status: 401, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    
+      // ① session確認
+      const sessionRow = await env.DB.prepare(
+        "SELECT * FROM sessions WHERE id = ?"
+      ).bind(session).first();
+    
+      if (!sessionRow) {
+        return new Response(
+          JSON.stringify({ error: "Invalid session" }),
+          { status: 401, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    
+      // ② user取得
+      const user = await env.DB.prepare(
+        "SELECT id, display_name, picture_url, points FROM users WHERE id = ?"
+      ).bind(sessionRow.user_id).first();
+    
+      if (!user) {
+        return new Response(
+          JSON.stringify({ error: "User not found" }),
+          { status: 404, headers: { "Content-Type": "application/json" } }
+        );
+      }
+    
+      return new Response(
+        JSON.stringify(user),
+        { headers: { "Content-Type": "application/json" } }
+      );
     }
 
     return env.ASSETS.fetch(request);
