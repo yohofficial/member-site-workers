@@ -85,9 +85,43 @@ export default {
 
       const tokenData = await tokenResp.json();
 
+      // ② プロフィール取得
+      const profileRes = await fetch("https://api.line.me/v2/profile", {
+        headers: {
+          Authorization: `Bearer ${tokenData.access_token}`
+        }
+      });
+
+      const profile = await profileRes.json();
+    
+      // ③ ユーザー存在確認
+      let user = await env.DB.prepare(
+        "SELECT * FROM users WHERE line_user_id = ?"
+      ).bind(profile.userId).first();
+
+      // ④ なければ登録
+      if (!user) {
+        await env.DB.prepare(
+          "INSERT INTO users (line_user_id, display_name, picture_url) VALUES (?, ?, ?)"
+        ).bind(
+          profile.userId,
+          profile.displayName,
+          profile.pictureUrl
+        ).run();
+    
+        user = await env.DB.prepare(
+          "SELECT * FROM users WHERE line_user_id = ?"
+        ).bind(profile.userId).first();
+      }
+          
       // 仮：ユーザー識別子
       const sessionId = crypto.randomUUID();
-
+      
+      await env.DB.prepare(
+        "INSERT INTO sessions (id, user_id) VALUES (?, ?)"
+      ).bind(sessionId, user.id).run();
+    
+      // ⑥ Cookie保存してmypageへ
       return new Response(null, {
       status: 302,
       headers: {
