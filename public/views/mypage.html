@@ -88,13 +88,13 @@ async function loadUser() {
   const user = await res.json();
 
   document.getElementById("username").textContent =
-    `ようこそ、${user.name} さん！`;
+    `ようこそ、${user.display_name} さん！`;
 
   document.getElementById("points").textContent =
     `現在のポイント：${user.points} P`;
 
   new QRCode(document.getElementById("qrcode"), {
-    text: user.lineId,
+    text: user.line_user_id,
     width: 260,
     height: 260,
     correctLevel: QRCode.CorrectLevel.H
