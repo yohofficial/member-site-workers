@@ -1,119 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>マイページ</title>
-
-  <link rel="stylesheet" href="/css/style.css">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
   <style>
-    body { font-family: sans-serif; text-align: center; }
-    #qrcode { margin-top: 20px; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f5f5f5;
+    }
+
+    /* ===== ヘッダー（ロゴ固定） ===== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+
+    /* ===== メインコンテンツ ===== */
+    main {
+      padding: 80px 16px 80px; /* 上ヘッダー分・下フッター分余白 */
+      min-height: 100vh;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    /* ===== フッタータブ固定 ===== */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: white;
+      display: flex;
+      border-top: 1px solid #ddd;
+      z-index: 1000;
+    }
+
+    .tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .tab.active {
+      font-weight: bold;
+      border-top: 3px solid #06C755; /* LINE風グリーン */
+    }
   </style>
 </head>
-
 <body>
-<div class="page">
 
-  <table class="table-logo">
-    <tr>
-      <td class="left-cell">
-        <img src="https://lh3.googleusercontent.com/d/1JcMBGVlb2Hl6Wdo29DyNOVBk7sAHwlgp" style="width:160px;">
-      </td>
-    </tr>
-  </table>
+  <header>
+    LOGO
+  </header>
 
-  <!-- マイページ -->
-  <div id="content1" class="content active">
-    <header>
-      <h2 id="username">読み込み中...</h2>
-    </header>
+  <main>
+    <div class="card">
+      <h2>ユーザー情報</h2>
+      <p id="name">読み込み中...</p>
+    </div>
 
     <div class="card">
-      <p>会員証</p>
-      <div class="qrcode-container" id="qrcode"></div>
-      <p class="points" id="points"></p>
+      <h2>ポイント</h2>
+      <p id="points">-- pt</p>
     </div>
 
-    <div class="notice-list">
-      <div class="notice-item highlight">【特別】今月限定！リフレッククーポン配布中</div>
-      <div class="notice-item highlight">3/20 サイトシステムメンテナンスのお知らせ</div>
-    </div>
-  </div>
+    <div style="height: 800px;"></div>
+  </main>
 
-  <!-- 予約 -->
-  <div id="content2" class="content">
-    <p>現在の予約</p>
-    <div class="card">
-      <div class="notice-item highlight">
-        2026/1/28(水) 19:00～20:00<br>
-        クーポン：タイ式マッサージ３
-      </div>
-      <button>予約サイトへ</button>
-    </div>
-  </div>
+  <footer>
+    <div class="tab active" onclick="selectTab(this)">マイページ</div>
+    <div class="tab" onclick="selectTab(this)">予約</div>
+    <div class="tab" onclick="selectTab(this)">限定メニュー</div>
+  </footer>
 
-  <!-- クーポン -->
-  <div id="content3" class="content">
-    <p>配信中のクーポン</p>
-    <div class="card">
-      <div class="notice-item highlight">
-        会員登録限定<br>
-        クーポン：タイ式マッサージ３
-      </div>
-    </div>
-  </div>
+  <script>
+    function selectTab(el) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+    }
 
-</div>
-
-<!-- 下メニュー -->
-<div class="bottom-menu">
-  <button class="btn active" onclick="showContent(1)">マイページ</button>
-  <button class="btn" onclick="showContent(2)">予約</button>
-  <button class="btn" onclick="showContent(3)">限定メニュー</button>
-</div>
-
-<script>
-async function loadUser() {
-  const res = await fetch("/api/me");
-
-  if (!res.ok) {
-    location.href = "/";
-    return;
-  }
-
-  const user = await res.json();
-
-  document.getElementById("username").textContent =
-    `ようこそ、${user.display_name} さん！`;
-
-  document.getElementById("points").textContent =
-    `現在のポイント：${user.points} P`;
-
-  new QRCode(document.getElementById("qrcode"), {
-    text: user.line_user_id,
-    width: 260,
-    height: 260,
-    correctLevel: QRCode.CorrectLevel.H
-  });
-}
-
-loadUser();
-
-function showContent(no) {
-  document.querySelectorAll('.content')
-    .forEach(el => el.classList.remove('active'));
-
-  document.querySelectorAll('.btn')
-    .forEach(btn => btn.classList.remove('active'));
-
-  document.getElementById('content' + no).classList.add('active');
-  document.querySelectorAll('.btn')[no - 1].classList.add('active');
-}
-</script>
+    // APIからユーザー情報取得
+    fetch('/api/me')
+      .then(res => res.json())
+      .then(data => {
+        if (data.display_name) {
+          document.getElementById('name').textContent = data.display_name;
+          document.getElementById('points').textContent = (data.points || 0) + ' pt';
+        }
+      });
+  </script>
 
 </body>
 </html>
