@@ -120,15 +120,7 @@ export default {
       await env.DB.prepare(
         "INSERT INTO sessions (id, user_id) VALUES (?, ?)"
       ).bind(sessionId, user.id).run();
-    
-      // ⑥ Cookie保存してmypageへ
-      return new Response(null, {
-      status: 302,
-      headers: {
-        Location: "/mypage",
-        "Set-Cookie": `session_id=${sessionId}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=3600`
-        }
-      });
+      
       const response = new Response(null, {
         status: 302,
         headers: {
